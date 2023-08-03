@@ -1,8 +1,11 @@
 ---
-title: "Discrimination vs. Centrality"
+title: "Correlation between Racial Discrimination and Centrality"
 author: "Alijah"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -11,17 +14,55 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-#Loading packages 
+
 ```{r packages}
 
+#Loading packages 
 library(ggplot2)
+library(readxl)
 
 ```
 
-#Load data
+
 ```{r data}
 
-data<-read.csv("Data/STGREW1B_May_Qualtrics_Alijah.csv")
+#Load data
+data<-read_xls("Data/STGREW1B_May_Qualtrics_Alijah.xls")
+
+#Recoding 
+data$EDS_Sum<-rowSums(data[,20:24])
+data$Average_Centrality<-rowSums(data[,c(27,28,29,31,32,33,34,36)])
+
+```
+
+
+## Hypothesis 
+
+The hypothesis is that there will be a correlation between Racial Discrimination and Centrality.
+This hypothesis was supported. The correlation was positive. 
+
+## Correlation Analysis 
+```{r p1}
+
+#Run the correlation test for hypothesis
+p1<-cor.test(data$EDS_Sum,data$Average_Centrality)
+
+#Output the result
+p1
+
+#Generate the graph
+plot1<-ggplot(data=data,
+              aes(x=Average_Centrality,
+                  y=EDS_Sum))+
+  labs(x="Centrality",
+       y="Racial Discrimination")+
+  theme_gray(base_size = 20)+
+  geom_point()+
+  geom_smooth(method="lm")
+
+#Output the graph
+plot1
+
 
 ```
 
